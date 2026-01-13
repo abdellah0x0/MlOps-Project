@@ -12,7 +12,7 @@ with open("models/tokenizer.pkl", "rb") as f:
     tokenizer = pickle.load(f)
 
 # Load raw reviews
-raw_df = pd.read_csv("data/raw.csv")
+raw_df = pd.read_csv("data/raw_reviews.csv")
 
 # Normalize reviews the same way as training
 def normalize_arabic(text):
