@@ -65,9 +65,7 @@ if test_df.empty:
 X_test = pad_sequences(tokenizer.texts_to_sequences(test_df['review'].tolist()), maxlen=MAX_LEN)
 y_test = np.array(test_df['sentiment'])
 
-# -------------------------------
 # Predict and evaluate
-# -------------------------------
 y_pred = (model.predict(X_test, batch_size=64) > 0.5).astype("int32").reshape(-1)
 
 print("=== Classification Report ===")
