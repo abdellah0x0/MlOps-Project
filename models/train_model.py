@@ -5,9 +5,9 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, LSTM, Dense
 import pickle
+from tensorflow.keras.callbacks import EarlyStopping
 import os
 
-# Config
 MAX_WORDS = 5000
 MAX_LEN = 100
 BATCH_SIZE = 64
@@ -31,7 +31,7 @@ y_train = np.array(train_df['sentiment'])
 y_val   = np.array(val_df['sentiment'])
 
 # Tokenize and pad sequences
-tokenizer = Tokenizer(num_words=MAX_WORDS)
+tokenizer = Tokenizer(num_words=MAX_WORDS,oov_token="<OOV>")
 tokenizer.fit_on_texts(X_train_texts)
 
 X_train = pad_sequences(tokenizer.texts_to_sequences(X_train_texts), maxlen=MAX_LEN)
@@ -51,6 +51,11 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 model.summary()
 
 # Train model
+early_stop = EarlyStopping(
+    monitor='val_accuracy',
+    patience=3,
+    restore_best_weights=True
+)
 history = model.fit(
     X_train, y_train,
     epochs=EPOCHS,
@@ -59,5 +64,7 @@ history = model.fit(
 )
 
 # Save model
+
 model.save(MODEL_PATH)
 print(f"Training complete. Model saved to {MODEL_PATH}")
+
