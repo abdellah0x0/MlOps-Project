@@ -1,20 +1,19 @@
-import pandas as pd
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+import numpy as np
 import pickle
 import re
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 MAX_LEN = 100
+MODEL_PATH = "models/moroccan_sentiment_lstm.h5"
+TOKENIZER_PATH = "models/tokenizer.pkl"
 
-# Load model & tokenizer
-model = load_model("models/moroccan_sentiment_lstm.h5")
-with open("models/tokenizer.pkl", "rb") as f:
+model = load_model(MODEL_PATH)
+
+with open(TOKENIZER_PATH, "rb") as f:
     tokenizer = pickle.load(f)
 
-# Load raw reviews
-raw_df = pd.read_csv("data/raw_reviews.csv")
-
-# Normalize reviews the same way as training
+# normalization
 def normalize_arabic(text):
     text = str(text)
     text = re.sub(r"[إأآا]", "ا", text)
@@ -26,14 +25,23 @@ def normalize_arabic(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-raw_df['review'] = raw_df['review'].apply(normalize_arabic)
+# prediction function
+def predict_review(review_text):
+    review_text = normalize_arabic(review_text)
+    seq = tokenizer.texts_to_sequences([review_text])
+    if len(seq[0]) == 0:
+        return "negative", 0.50   
+    padded = pad_sequences(seq, maxlen=MAX_LEN)
+    prob = model.predict(padded, verbose=0)[0][0]
+    if np.isnan(prob):
+        return "negative", 0.50
+    if prob >= 0.5:
+        return "positive", float(prob)
+    else:
+        return "negative", float(1 - prob)
 
-# Tokenize & pad all reviews at once
-X = pad_sequences(tokenizer.texts_to_sequences(raw_df['review'].tolist()), maxlen=MAX_LEN)
-
-# Predict in batch
-y_pred = (model.predict(X, batch_size=64) > 0.5).astype("int32")
-raw_df['sentiment_pred'] = ["positive" if p==1 else "negative" for p in y_pred]
-
-raw_df.to_csv("data/raw_predicted.csv", index=False)
-print("Predictions done! Check raw_predicted.csv")
+if __name__ == "__main__":
+    text = "هذا الفيلم رائع بزاف"
+    sentiment, confidence = predict_review(text)
+    print(f"Sentiment: {sentiment}")
+    print(f"Confidence: {confidence:.3f}")
