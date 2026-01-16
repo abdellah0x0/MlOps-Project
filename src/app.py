@@ -1,10 +1,6 @@
-import json
-import numpy as np
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Any
-import pickle
 import sys
 import os
 
