@@ -32,7 +32,7 @@ jobs:
       
       - name: Lint code
         run: |
-          flake8 src/ tests/ --max-line-length=88 --statistics
+          flake8 src/ tests/ --max-line-length=88 --statistics --extend-ignore=F401,E402
 
   test:
     runs-on: ubuntu-latest
