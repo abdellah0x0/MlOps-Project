@@ -65,4 +65,4 @@ history = model.fit(
 # Save model
 
 model.save(MODEL_PATH)
-print(f"Training complete. Model saved to {MODEL_PATH}")
+print(f"Training complete. Model saved to : {MODEL_PATH}")
