@@ -102,6 +102,9 @@ jobs:
         with:
           name: trained-model
           path: models/
+      - name: Install Heroku CLI
+        run: |
+         curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
       - name: Login to Heroku Container Registry
         run: echo "${{ secrets.HEROKU_API_KEY }}" | docker login --username=_ --password-stdin registry.heroku.com
       - name: Build and push
