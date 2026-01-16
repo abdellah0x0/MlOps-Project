@@ -2,9 +2,9 @@ name: Arabic Sentiment Analyzer CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 env:
   PYTHON_VERSION: '3.9'
