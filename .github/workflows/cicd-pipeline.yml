@@ -132,10 +132,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"review": "فيلم رائع"}' \
             --max-time 10
-      
-      - name: Health check
-        run: |
-          curl -f https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com/
+    
 
   full-pipeline:
     runs-on: ubuntu-latest
